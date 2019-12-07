@@ -1,16 +1,14 @@
 
-class Calc {
-    constructor() { }
-
-    calculateValues(price, params) {
+class Calc{
+    static _calculateValues(price, params) {
         const promotionalValue = price * (params.promotionalValueInPercent / 100);
         const afterPromotionalValue = price * (params.promotionalValueInPercent / 100);
         return { promotionalValue, afterPromotionalValue };
     }
 
-    calculatePeriods(minutes, params) {
-        if (!minutes > 0) return 0;
+    static _calculatePeriods(minutes, params) {
         let remaining = minutes - params.quantity;
+
         if (remaining <= 0) {
             return { promotionalTime: minutes, afterPromotionalTime: 0 };
         } else {
@@ -18,10 +16,11 @@ class Calc {
         }
     }
 
+    static calculateFinalValue(minutes, price, params) {
+        if(minutes <= 0 || price <= 0) return 0;
 
-    calculateFinalValue(minutes, price, params) {
-        const value = this.calculateValues(price, params);
-        const period = this.calculatePeriods(minutes, params);
+        const value = this._calculateValues(price, params);
+        const period = this._calculatePeriods(minutes, params);
 
         const promotional = value.promotionalValue * period.promotionalTime;
         const afterPromotional = value.afterPromotionalValue * period.afterPromotionalTime;
@@ -29,6 +28,6 @@ class Calc {
         return promotional + afterPromotional;
     }
 }
-
+    
 
 module.exports = Calc;

@@ -1,10 +1,14 @@
+const dao = require("../dao/plan");
 class Plan {
     constructor({ id }) {
         this.id = id;
-        const response = await dao.getPlan(this.id);
+    }
 
-        this.name = response.name;
-        this.params = response.params;
+    async loadPlan(){
+        const values = await dao.getPlan(this.id);
+        this.name = values.name;
+        this.params = values.params;
+        return true;
     }
 
     get name() {
@@ -14,7 +18,6 @@ class Plan {
     get params(){
         return this.params;
     }
-
 
     /*
     ? Valores esperados nos parâmetros.

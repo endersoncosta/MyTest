@@ -4,14 +4,15 @@ class Tariff {
         this.destiny = destiny;
     }
 
-    async getTariff(){
-        return dao.getTariff();
+    async loadTariff(){
+        const values = await dao.getTariff(this.origin,this.destiny);
+        this.price = values.price;
+        return true;
     }
 
-    async setTariff(values){
-        return await dao.setTariff(values);
+    get price(){
+        return this.price;
     }
-
 }
 
 module.exports = Tariff;
