@@ -6,6 +6,7 @@ class costController {
 
     static async getPlans(page) {
         try {
+            if(!page) page = 0;
             return await PlanController.getList(page);
         } catch (e) {
             console.log(e);
@@ -23,6 +24,8 @@ class costController {
             await _tariff.loadTariff();
 
             const result = await Calc.calculateFinalValueAsync(data.minutes, _tariff.price, _plan.getParams());
+
+
             const response = { message: "success", result };
             return response;
         } catch (e) {

@@ -17,10 +17,7 @@ describe("Database connection", () => {
             return _tariff.price;
         });
 
-
         expect(response).toBe(1.9);
-
-
     });
 });
 

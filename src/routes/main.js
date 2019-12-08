@@ -2,8 +2,8 @@ const controller = require("../control/cost");
 
 
 module.exports = function (app) {
-    app.get("/v1/plans/:page", async (req, res) => {
-        await controller.getPlans(req.params.page)
+    app.get("/v1/plans", async (req, res) => {
+        await controller.getPlans(req.query.page)
             .then(response => res.send(response))
             .catch(error => res.status(500).send(error));
     });

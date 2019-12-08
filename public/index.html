@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fale Mais - VxTel</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body class="bg-dark">
+    <div id="app">
+
+        <div class="container my-5 text-center text-light">
+            <h1 class="font-weight-light m-0">Novo VxTel <span class="font-weight-bold">Fale Mais</span></h1>
+            <h4 class="font-weight-light font-italic">Aproveite mais de suas ligações!</h4>
+        </div>
+
+        <transition name="slide-up" mode="out-in">
+            <div v-if="step == 1" key="s1">
+                <div class="container mt-5 p-5 bg-white rounded shadow-lg">
+                    <h3 class="font-weight-light text-center m-0">Simule agora mesmo os benefícios!</h3>
+                    <h5 class="text-center font-weight-light">Qual plano você gostaria de comparar?</h5>
+
+                    <div class="col-12 col-lg-8 mt-5 mx-auto">
+                        <div class="form-group">
+                            <select class="custom-select" :class="{'is-invalid':error.plan}" v-model="form.idPlan">
+                                <option value="0" selected disabled hidden>selecione o plano</option>
+                                <option v-for="plan in plans" v-bind:value="plan.id">{{ plan.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="button" class="btn btn-purple font-weight-bold pb-2" @click="finishStep()">Próxima
+                            Etapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="step == 2" key="s2">
+                <div class="container mt-5 p-5 bg-white rounded shadow-lg">
+                    <h3 class="font-weight-light text-center m-0">Simulação de chamada.</h3>
+                    <h5 class="text-center font-weight-light">Insira as informações para que possamos calcular seus
+                        benefícios:</h5>
+
+
+                    <div class="col-12 col-lg-8 mt-5 mx-auto">
+                        <div class="form-group">
+                            <label class="col-form-label font-weight-light" for="inputLarge">Minutos gastos:</label>
+                            <input class="form-control" :class="{'is-invalid':error.minutes}" v-model="form.minutes"
+                                type="number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label font-weight-light" for="inputLarge">DDD de Origem:</label>
+                            <input class="form-control" :class="{'is-invalid':error.origin}" v-model="form.origin"
+                                type="number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label font-weight-light" for="inputLarge">DDD de Destino:</label>
+                            <input class="form-control" :class="{'is-invalid':error.destiny}" v-model="form.destiny"
+                                type="number" />
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="button" class="btn btn-outline-secondary font-weight-bold pb-2"
+                            @click="backStep()">Voltar
+                            Etapa</button>
+                        <button type="button" class="btn btn-purple font-weight-bold pb-2" @click="finishStep()">Próxima
+                            Etapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="step == 3" key="s3">
+                <div class="container mt-5 p-5 bg-white rounded shadow-lg">
+                    <h3 class="font-weight-light text-center m-0">Resultado da simulação:</h3>
+                    <h5 class="text-center font-weight-light">Veja a diferença dos valores!</h5>
+
+                    <div class="row mt-5">
+                        <div class="col-12 col-lg-6">
+                            <div class="text-white text-center bg-purple rounded py-4">
+                                <h3 class="font-weight-light">Valor com o plano:</h3>
+                                <h1 class="font-weight-normal">R$ <span
+                                        class="font-weight-bold">{{ parseFloat(result.planValue).toFixed(2).replace(".", ",") }}</span>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="text-center bg-light rounded  py-4">
+                                <h3 class="font-weight-light">Valor sem o plano:</h3>
+                                <h1 class="font-weight-normal">R$ <span
+                                        class="font-weight-bold">{{ parseFloat(result.normalValue).toFixed(2).replace(".", ",") }}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="text-center mt-5">
+                        <button type="button" class="btn btn-outline-secondary font-weight-bold pb-2"
+                            @click="backStep()">Voltar
+                            Etapa</button>
+                    </div>
+                </div>
+        </transition>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                step: 1,
+                loading: false,
+                result: null,
+                plans: [],
+                form: { idPlan: "0", minutes: "", origin: "", destiny: "" },
+                error: { idPlan: false, minutes: false, origin: false, destiny: false }
+            },
+            methods: {
+                formularioValido() {
+                    let valido = true;
+
+                    if (this.form.minutes < 1) {
+                        this.error.minutes = true;
+                        valido = false;
+                    }
+
+                    if (this.form.origin < 11 || this.form.origin > 99) {
+                        this.error.origin = true;
+                        valido = false;
+                    }
+
+                    if (this.form.destiny < 11 || this.form.destiny > 99) {
+                        this.error.destiny = true;
+                        valido = false;
+                    }
+
+                    this.$forceUpdate();
+                    return valido;
+                },
+                finishStep() {
+                    if (this.step === 1) {
+                        if (this.form.idPlan < 1) this.error.idPlan = true;
+                        else this.step = 2;
+                    }
+
+                    if (this.step === 2) {
+                        if (this.formularioValido()) {
+                            this.calculate();
+                        }
+                    }
+                },
+                calculate() {
+                    this.loading = true;
+                    const self = this;
+                    axios
+                        .post("/v1/calculate", self.form)
+                        .then(response => {
+                            this.result = response.data.result;
+                            this.step = 3;
+                        })
+                        .catch(response => {
+                            console.log(response.data);
+                        })
+                        .finally(() => (this.loading = false));
+                },
+                backStep() {
+                    const position = this.step - 1;
+                    if (position <= 1) this.step = 1;
+                    else this.step = position;
+                }
+
+            },
+            mounted() {
+                axios.get("/v1/plans")
+                    .then(response => {
+                        this.plans = response.data;
+                    })
+                    .catch(error => error);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -25,7 +25,11 @@ class Calc {
         const promotional = value.promotionalValue * period.promotionalTime;
         const afterPromotional = value.afterPromotionalValue * period.afterPromotionalTime;
 
-        return promotional + afterPromotional;
+        const planValue =  promotional + afterPromotional;
+        const normalValue = minutes * price;
+
+        return { planValue, normalValue };
+
     }
 
     static async calculateFinalValueAsync(minutes, price, params) {
