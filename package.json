@@ -11,9 +11,13 @@
     "express": "^4.17.1",
     "mysql2": "^2.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "supertest": "^4.0.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "set NODE_ENV=test",
+    "test": "jest",
     "start": "node server.js"
   },
   "repository": {

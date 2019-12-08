@@ -10,6 +10,12 @@ class PlanDAO{
         const sql = "select * from plan limit ?, 5";
         return await db.query(sql, [position]);
     }
+
+    static async create(name, params){
+        const sql = "insert into plan (name, params) values (?,?)";
+        return await db.query(sql, [name,params]);
+
+    }
 }
 
 module.exports = PlanDAO;
