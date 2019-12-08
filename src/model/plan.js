@@ -8,8 +8,8 @@ class Plan {
 
     async loadPlan() {
         const values = await dao.getPlan(this.id);
-        this.name = values.name;
-        this.params = values.params;
+        this.name = values[0].name;
+        this.params = JSON.parse(values[0].params);
         return true;
     }
 

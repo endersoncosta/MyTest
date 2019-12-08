@@ -3,6 +3,8 @@ const app = require("../../app");
 const { Plan } = require("../../src/model");
 
 describe("Database connection", () => {
+    let newPlanId = 0;
+
     it("should insert a registry in database", async () => {
         const myPlan = new Plan({
             name: "test" + new Date().getTime(),
@@ -13,16 +15,27 @@ describe("Database connection", () => {
             }
         });
         const response = await myPlan.create();
+        newPlanId = response.insertId;
 
         expect(response.affectedRows).toBe(1);
 
     });
 
+    it("should return just a plan of database", async () => {
+        const myPlan = new Plan({ id : this.insertId });
+        const response = await myPlan.loadPlan();
+        
+        expect(response).toBe(true);
+    });
+});
+
+
+describe("Express Route", ()=>{
     it("should receive a list of plans", async () => {
         const response = await request(app)
             .get("/v1/plans/0")
             .send();
 
-        expect(response.status).toBe(200);
+        expect(response.text.length).toBeGreaterThan(0);
     });
 });

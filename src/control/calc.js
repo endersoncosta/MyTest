@@ -1,8 +1,8 @@
 
-class Calc{
+class Calc {
     static _calculateValues(price, params) {
         const promotionalValue = price * (params.promotionalValueInPercent / 100);
-        const afterPromotionalValue = price * (params.promotionalValueInPercent / 100);
+        const afterPromotionalValue = price * (params.afterPromotionValueInPercent / 100);
         return { promotionalValue, afterPromotionalValue };
     }
 
@@ -17,7 +17,7 @@ class Calc{
     }
 
     static calculateFinalValue(minutes, price, params) {
-        if(minutes <= 0 || price <= 0) return 0;
+        if (minutes <= 0 || price <= 0) return 0;
 
         const value = this._calculateValues(price, params);
         const period = this._calculatePeriods(minutes, params);
@@ -27,7 +27,13 @@ class Calc{
 
         return promotional + afterPromotional;
     }
+
+    static async calculateFinalValueAsync(minutes, price, params) {
+        return new Promise((resolve) => {
+            resolve(this.calculateFinalValue(minutes, price, params));
+        });
+    }
 }
-    
+
 
 module.exports = Calc;

@@ -2,6 +2,7 @@ const db = require("./database");
 
 class PlanDAO{
     static async getPlan(id){
+        console.log(id);
         const sql = "select * from plan where id = ? limit 1";
         return await db.query(sql, [id]);
     }

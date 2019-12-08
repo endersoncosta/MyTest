@@ -15,27 +15,19 @@ class costController {
 
     static async calculateDiscount(data) {
         try {
+            const _plan = new Plan({id:data.idPlan});
+            await _plan.loadPlan();
 
-            /*
-            ?Valores esperado
-            *{
-            *    minutes: quantity,
-            *    plan: id,
-            *    origin,
-            *    destiny
-            *}
-            */
 
-            const comparedPlan = new Plan(data.idPlan);
-            await comparedPlan.loadPlan();
+            const _tariff = new Tariff(data.origin, data.destiny);
+            await _tariff.loadTariff();
 
-            const testTariff = new Tariff(data.origin, data.destiny);
-            await testTariff.loadTariff();
-
-            return Calc.calculateFinalValue(data.minutes, testTariff.price, comparedPlan.params);
+            const result = await Calc.calculateFinalValueAsync(data.minutes, _tariff.price, _plan.getParams());
+            const response = { message: "success", result };
+            return response;
         } catch (e) {
             console.log(e);
-            return "Erro ao calcular valores";
+            return {message:"An error occurred when we tried to calculate!"};
         }
 
     }
