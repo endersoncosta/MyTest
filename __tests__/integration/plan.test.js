@@ -2,10 +2,10 @@ const request = require("supertest");
 const app = require("../../app");
 const { Plan } = require("../../src/model");
 
-describe("Database connection", () => {
+describe("Database connection", async () => {
     let newPlanId = 0;
 
-    it("should insert a registry in database", async () => {
+    await it("should insert a registry in database", async () => {
         const myPlan = new Plan({
             name: "test" + new Date().getTime(),
             params: {
@@ -21,19 +21,19 @@ describe("Database connection", () => {
 
     });
 
-    it("should return just a plan of database", async () => {
-        const myPlan = new Plan({ id : this.insertId });
+    await it("should return just a plan of database", async () => {
+        const myPlan = new Plan({ id: this.newPlanId });
         const response = await myPlan.loadPlan();
-        
+
         expect(response).toBe(true);
     });
 });
 
 
-describe("Express Route", ()=>{
+describe("Express Route", () => {
     it("should receive a list of plans", async () => {
         const response = await request(app)
-            .get("/v1/plans/0")
+            .get("/v1/plans")
             .send();
 
         expect(response.text.length).toBeGreaterThan(0);

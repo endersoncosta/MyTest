@@ -5,13 +5,17 @@ class Tariff {
         this.destiny = destiny;
     }
 
-    async loadTariff(){
-        const values = await dao.getTariff(this.origin,this.destiny);
-        this.value = values[0].value;
-        return true;
+    async loadTariff() {
+        try {
+            const values = await dao.getTariff(this.origin, this.destiny);
+            this.value = values[0].value;
+            return true;
+        } catch (_e) {
+            throw {message: "Tariff not found", code: 400};
+        }
     }
 
-    get price(){
+    get price() {
         return this.value;
     }
 }

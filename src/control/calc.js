@@ -17,7 +17,7 @@ class Calc {
     }
 
     static calculateFinalValue(minutes, price, params) {
-        if (minutes <= 0 || price <= 0) return 0;
+        if (minutes <= 0 || price <= 0) throw {message: "This entry is not valid!", code: 400};
 
         const value = this._calculateValues(price, params);
         const period = this._calculatePeriods(minutes, params);

@@ -1,12 +1,13 @@
 const { Plan, Tariff } = require("../model");
 const PlanController = require("./plan");
 const Calc = require("./calc");
+const validator = require("./validator");
 
 class costController {
 
     static async getPlans(page) {
         try {
-            if(!page) page = 0;
+            if (!page) page = 0;
             return await PlanController.getList(page);
         } catch (e) {
             console.log(e);
@@ -16,7 +17,9 @@ class costController {
 
     static async calculateDiscount(data) {
         try {
-            const _plan = new Plan({id:data.idPlan});
+            validator.validateCalculateEntry(data);
+
+            const _plan = new Plan({ id: data.idPlan });
             await _plan.loadPlan();
 
 
@@ -25,14 +28,14 @@ class costController {
 
             const result = await Calc.calculateFinalValueAsync(data.minutes, _tariff.price, _plan.getParams());
 
-
             const response = { message: "success", result };
             return response;
         } catch (e) {
-            console.log(e);
-            return {message:"An error occurred when we tried to calculate!"};
+            if (!e.code)
+                throw { code: 500, message: e };
+            else
+                throw e;
         }
-
     }
 
 

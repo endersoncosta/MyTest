@@ -32,7 +32,6 @@ describe("Express Route", () => {
                 destiny: 16
             });
 
-        console.log(response);
-        expect(response.body.result).toBe(564.3);
+        expect(response.body.result.planValue).toBe(564.3);
     });
 });

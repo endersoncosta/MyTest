@@ -7,10 +7,14 @@ class Plan {
     }
 
     async loadPlan() {
-        const values = await dao.getPlan(this.id);
-        this.name = values[0].name;
-        this.params = JSON.parse(values[0].params);
-        return true;
+        try {
+            const values = await dao.getPlan(this.id);
+            this.name = values[0].name;
+            this.params = JSON.parse(values[0].params);
+            return true;
+        } catch (_e) {
+            throw {message: "Plan not found!", code: 400};
+        }
     }
 
     getName() {
